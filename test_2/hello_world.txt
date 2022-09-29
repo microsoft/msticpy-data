@@ -1,0 +1,1 @@
+Some dummy text to check if git sparse-checkout works
