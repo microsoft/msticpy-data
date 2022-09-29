@@ -68,12 +68,16 @@ def format_user_configuration(configs_dict, verbose =True):
         print('#################### SUMMARY #################### \n')
 
         print('Threat Intel (TI) Data: [\n')
-        print('Threat Intel (TI) Reports: [\n')
         [print(f'\t"{elem}", \n') if index < len(formatted_configs['ti']) - 1 else print(f'\t"{elem}"\n') for index, elem in enumerate(formatted_configs['ti']) ]
         print(']\n')
 
         print(f"# of TI entries: {len(formatted_configs['ti'])}\n")
-        print(f"# of TI reports: {len(formatted_configs['ti'])}\n")
         print(f"NLP Model: {formatted_configs['model']}\n" )
         print(f"Minimum Score Threshold: {formatted_configs['score']}\n" )
         print(f"Chunk Threat Intel data?: {configs_dict['chunk']}\n")
+        print(f"Extract Indicators Of Compromise (IoCs)?: {configs_dict['iocs']}\n")
+        print(f"Get NLP Model Explainability?: {configs_dict['explain']}\n")
+
+        print('################################################# \n')
+
+    return formatted_configs
