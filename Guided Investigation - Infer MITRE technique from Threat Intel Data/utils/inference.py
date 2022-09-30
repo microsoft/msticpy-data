@@ -6,7 +6,6 @@ from typing import List, Dict, Union
 from utils import process
 from transformers import TextClassificationPipeline
 
-
 class InferenceClassificationPipeline():
     def __init__(self, model, tokenizer, device):
         self.model = model
@@ -82,12 +81,6 @@ class ShapPipeline():
 
         shap_for_text = shap_values[i, :, label]
         shap_base = {
-            'values': shap_for_text.values,
-            'base_values': shap_for_text.base_values,
-            'data': shap_for_text.data
-        }
-
-        shap_formatted = {
             'values': np.round(shap_for_text.values, 5),
             'base_values': shap_for_text.base_values,
             'data': shap_for_text.data,
@@ -97,23 +90,14 @@ class ShapPipeline():
         positive_indices = shap_base['values'] > 0
         positive_values = shap_base['values'][positive_indices]
         positive_data = shap_base['token_processed'][positive_indices]
-        positive_indices = shap_formatted['values'] > 0
-        positive_values = shap_formatted['values'][positive_indices]
-        positive_data = shap_formatted['token_processed'][positive_indices]
 
         neutral_indices = shap_base['values'] == 0
         neutral_values = shap_base['values'][neutral_indices]
         neutral_data = shap_base['token_processed'][neutral_indices]
-        neutral_indices = shap_formatted['values'] == 0
-        neutral_values = shap_formatted['values'][neutral_indices]
-        neutral_data = shap_formatted['token_processed'][neutral_indices]
 
         negative_indices = shap_base['values'] < 0
         negative_values = shap_base['values'][negative_indices]
         negative_data = shap_base['token_processed'][negative_indices]
-        negative_indices = shap_formatted['values'] < 0
-        negative_values = shap_formatted['values'][negative_indices]
-        negative_data = shap_formatted['token_processed'][negative_indices]
 
         shap_sentiment = {
             'positive': dict(zip(positive_data, positive_values)),
@@ -189,7 +173,6 @@ def format_predictions(
     else:
         inference_df = pd.DataFrame()
     return inference_df
-    return inference_df
 
 def process_shap_values(shap_dict: dict):
     shap_object = shap.Explanation(
@@ -208,6 +191,7 @@ def process_shap_explainability_for_row(
     row_index
 ):
     if inference_df.empty:
+        print('Empty Dataframe. No explanations available.')
         raise KeyError(f'Index {row_index} does not exist in the empty dataframe.')
         return
 

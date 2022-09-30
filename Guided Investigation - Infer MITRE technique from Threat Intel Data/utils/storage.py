@@ -9,7 +9,6 @@ class AssetStorage():
     storage_folder = artifacts.__path__[0]
     def __init__(self, model_name: str):
         self.model_name = model_name
-        self.model_assets_path = os.path.join(self.storage_folder, model_name)
         self.artifacts_path = os.path.join(self.storage_folder, model_name)
 
         self.tokenizer = self.download_tokenizer()
@@ -17,7 +16,6 @@ class AssetStorage():
         self.model, self.device = self.download_model()
     
     def download_model(self):
-        self.model_path = os.path.join(self.model_assets_path, 'model')
         self.model_path = os.path.join(self.artifacts_path, 'model_state_dicts')
         model = GPT2ForSequenceClassification.from_pretrained(
             pretrained_model_name_or_path = self.model_name.split('-')[0],
@@ -30,7 +28,6 @@ class AssetStorage():
         model.eval()
 
         device_str = 'cuda' if torch.cuda.is_available() else 'cpu'
-        model = torch.load(self.model_path, map_location=torch.device(device_str))
         device = torch.device(device_str)
         model.to(device)
         
@@ -39,14 +36,12 @@ class AssetStorage():
         return model, device
     
     def download_tokenizer(self):
-        self.tokenizer_path = os.path.join(self.model_assets_path, 'tokenizer')
         self.tokenizer_path = os.path.join(self.artifacts_path, 'tokenizer')
         tokenizer = joblib.load(self.tokenizer_path)
         print(f"Tokenizer artifact obtained from path {self.tokenizer_path}")
         return tokenizer
     
     def download_labels(self):
-        self.labels_path = os.path.join(self.model_assets_path, 'labels')
         self.labels_path = os.path.join(self.artifacts_path, 'labels')
         labels = json.load(open(self.labels_path, "r"))
         labels['label_to_technique'] = {int(key): value for key, value in labels['label_to_technique'].items()}
